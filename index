@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Línea Temporal · Arquitectura Renacentista y Manierista en Italia · Siglos XV–XVI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --page-bg: #f5f3f0;
+  --surface: #ffffff;
+  --border: #ccc8c2;
+  --border-light: #e2deda;
+  --text-primary: #111;
+  --text-secondary: #444;
+  --text-muted: #777;
+  --text-faint: #aaa;
+  --accent: #2c3e6b;
+  --t5: #b84d14;
+  --t5-bg: #fef3ec;
+  --t5-border: #e09060;
+  --a1:#5a4fcf; --a2:#1a8060; --a3:#2060a8; --a4:#a07010;
+  --a5:#a83018; --a6:#983060; --a7:#3a8010; --a8:#905808;
+  --a9:#3838a0; --a10:#605c58;
+  --h1:#5a4fcf; --h2:#1a8060; --h3:#a83018; --h4:#a07010; --h5:#983060;
+  --font: 'Source Sans 3', 'Helvetica Neue', Arial, sans-serif;
+  --font-s: 'Source Serif 4', Georgia, serif;
+}
+
+html { font-size: 14px; }
+body { font-family: var(--font); background: var(--page-bg); color: var(--text-primary); line-height: 1.5; }
+
+/* ── PRINT BAR ── */
+#pbar {
+  background: var(--accent);
+  color: #fff;
+  padding: 9px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12.5px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid #1a2545;
+}
+#pbar span { opacity: .82; letter-spacing: .01em; }
+#btnpdf {
+  background: #fff;
+  color: var(--accent);
+  border: none;
+  border-radius: 4px;
+  padding: 6px 16px;
+  font-family: var(--font);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: background .15s;
+}
+#btnpdf:hover { background: #dce5f5; }
+
+/* ── PAGE ── */
+.page { max-width: 1300px; margin: 0 auto; padding: 28px 24px 56px; }
+
+/* ── HEADER ── */
+.doc-header {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--accent);
+  padding: 20px 24px 16px;
+  margin-bottom: 16px;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.doc-header h1 {
+  font-family: var(--font-s);
+  font-size: clamp(17px, 2.3vw, 24px);
+  font-weight: 600;
+  line-height: 1.25;
+  margin-bottom: 4px;
+}
+.doc-header .sub { font-size: 12.5px; color: var(--text-secondary); }
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 18px;
+  margin-top: 9px;
+  padding-top: 9px;
+  border-top: 1px solid var(--border-light);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ── T5 NOTICE ── */
+.notice {
+  background: var(--t5-bg);
+  border: 1px solid var(--t5-border);
+  border-left: 4px solid var(--t5);
+  padding: 9px 15px;
+  font-size: 12.5px;
+  color: #6a2408;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  line-height: 1.5;
+}
+.notice svg { flex-shrink: 0; margin-top: 1px; }
+
+/* ── LEGEND ── */
+.legend {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  align-items: center;
+}
+.leg-title {
+  font-size: 9.5px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+  width: 100%;
+  margin-bottom: 1px;
+}
+.leg-item { display: flex; align-items: center; gap: 6px; }
+.ldot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+.lbar { width: 26px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+
+/* ── CHART ── */
+.chart-scroll { overflow-x: auto; }
+.chart-inner {
+  min-width: 840px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 16px 18px 20px;
+}
+
+/* ── SECTION HEAD ── */
+.sh { display: flex; margin: 14px 0 6px; }
+.sh-sp { width: 164px; min-width: 164px; flex-shrink: 0; }
+.sh-lbl {
+  flex: 1;
+  font-size: 9.5px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 4px;
+}
+
+/* ── AXIS ── */
+.axis-row { display: flex; margin-bottom: 2px; }
+.ax-sp { width: 164px; min-width: 164px; flex-shrink: 0; }
+.ax-line {
+  flex: 1;
+  position: relative;
+  height: 24px;
+  border-bottom: 1.5px solid var(--border);
+}
+.tick { position: absolute; bottom: 0; display: flex; flex-direction: column; align-items: center; }
+.tn { width: 1px; background: var(--border); }
+.tick.dec .tn  { height: 5px; }
+.tick.half .tn { height: 7px; }
+.tick.cen .tn  { height: 9px; background: var(--accent); }
+.tlbl {
+  font-size: 8.5px; color: var(--text-faint); margin-top: 2px;
+  transform: translateX(-50%); letter-spacing: .02em;
+}
+.tick.cen .tlbl { color: var(--accent); font-weight: 600; }
+.cband {
+  position: absolute; top: -9999px; bottom: -9999px; width: 1px;
+  background: var(--accent); opacity: .08; pointer-events: none;
+}
+
+/* ── ROW ── */
+.row { display: flex; align-items: center; min-height: 22px; margin-bottom: 2px; }
+.rl {
+  width: 164px; min-width: 164px; font-size: 11px;
+  color: var(--text-secondary); text-align: right;
+  padding-right: 12px; flex-shrink: 0; line-height: 1.3;
+}
+.ra { flex: 1; position: relative; height: 22px; }
+
+/* ── ARCH BAR ── */
+.abar {
+  position: absolute; top: 5px; height: 12px; border-radius: 2px;
+  display: flex; align-items: center; padding: 0 6px;
+  font-size: 7.5px; white-space: nowrap; overflow: hidden; font-weight: 500;
+  cursor: default; transition: filter .15s;
+}
+.abar:hover { filter: brightness(.8); }
+
+/* ── EVENT ── */
+.ev-row { min-height: 20px; }
+.ev-area { position: relative; flex: 1; height: 20px; }
+.evdot {
+  position: absolute; top: 50%; transform: translate(-50%,-50%);
+  width: 10px; height: 10px; border-radius: 50%; border: 2px solid;
+  background: var(--surface); cursor: pointer; z-index: 6; transition: transform .15s;
+}
+.evdot:hover { transform: translate(-50%,-50%) scale(1.5); }
+.evlbl {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  font-size: 9.5px; white-space: nowrap; pointer-events: none;
+  font-weight: 500; letter-spacing: .01em;
+}
+
+/* ── T5 STRIP ── */
+.t5strip { display: flex; min-height: 58px; }
+.t5lc {
+  width: 164px; min-width: 164px; flex-shrink: 0;
+  display: flex; flex-direction: column; justify-content: center; align-items: flex-end;
+  padding-right: 12px;
+  background: var(--t5-bg);
+  border-top: 2px solid var(--t5-border);
+  border-bottom: 2px solid var(--t5-border);
+}
+.t5lc .tag { font-size: 9px; letter-spacing: .14em; text-transform: uppercase; color: var(--t5); font-weight: 600; }
+.t5lc .sub2 { font-size: 9px; color: #884030; margin-top: 1px; }
+.t5area {
+  flex: 1; position: relative; height: 58px;
+  background: var(--t5-bg);
+  border-top: 2px solid var(--t5-border);
+  border-bottom: 2px solid var(--t5-border);
+}
+
+/* ── OTHER WORKS ── */
+.orow { min-height: 28px; }
+.oarea { position: relative; flex: 1; height: 28px; }
+
+/* ── DOTS ── */
+.dt5 {
+  position: absolute; border-radius: 50%;
+  background: var(--t5); border: 2.5px solid #d87040;
+  cursor: pointer; transition: transform .15s, box-shadow .15s;
+}
+.dt5:hover { box-shadow: 0 0 8px rgba(184,77,20,.45); }
+.doth {
+  position: absolute; border-radius: 50%;
+  background: #e8e4df; border: 1.5px solid #aaa8a2;
+  cursor: pointer; transition: transform .15s, background .15s;
+}
+.doth:hover { background: #c8c2ba; }
+
+/* ── DIVIDER ── */
+.divid { display: flex; margin: 8px 0; }
+.divid .dsp { width: 164px; min-width: 164px; flex-shrink: 0; }
+.divid .dln { flex: 1; border-top: 1px solid var(--border-light); }
+
+/* ── TOOLTIP ── */
+#tt {
+  position: fixed; background: #fff; border: 1px solid var(--border);
+  box-shadow: 0 4px 18px rgba(0,0,0,.14); border-radius: 5px;
+  padding: 10px 14px; font-family: var(--font); font-size: 12px;
+  color: var(--text-primary); pointer-events: none; z-index: 9999;
+  max-width: 260px; line-height: 1.55; display: none;
+}
+#tt .ty { font-family: var(--font-s); font-size: 20px; font-weight: 600; color: var(--accent); display: block; line-height: 1.1; margin-bottom: 3px; }
+#tt .tn2 { font-weight: 600; display: block; font-size: 13px; }
+#tt .tm { color: var(--text-secondary); display: block; font-size: 11.5px; }
+#tt .tb {
+  display: inline-block; margin-top: 6px; padding: 2px 9px; border-radius: 3px;
+  font-size: 9.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+}
+#tt .tb5 { background: var(--t5-bg); color: var(--t5); border: 1px solid var(--t5-border); }
+#tt .tbo { background: #f0ece8; color: var(--text-secondary); border: 1px solid var(--border); }
+
+/* ── TABLES ── */
+.ref-section { margin-top: 24px; }
+.ref-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.rblock h3 {
+  font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent); font-weight: 600; margin-bottom: 6px;
+  padding-bottom: 4px; border-bottom: 2px solid var(--accent);
+}
+table.rt { width: 100%; border-collapse: collapse; font-size: 11px; }
+table.rt th {
+  background: #eeeae6; color: var(--text-secondary); font-weight: 600;
+  font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase;
+  padding: 5px 8px; border: 1px solid var(--border); text-align: left;
+}
+table.rt td { padding: 4px 8px; border: 1px solid var(--border-light); vertical-align: top; }
+table.rt tr:nth-child(even) td { background: #faf8f5; }
+table.rt tr.t5r td { background: var(--t5-bg); }
+table.rt tr.t5r td:first-child { font-weight: 600; color: var(--t5); }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: middle; margin-right: 5px; border: 1px solid rgba(0,0,0,.1); }
+
+/* ── FOOTER ── */
+.doc-footer {
+  margin-top: 22px; padding-top: 10px; border-top: 1px solid var(--border);
+  font-size: 10.5px; color: var(--text-muted);
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 5px;
+}
+
+/* ── PRINT ── */
+@media print {
+  @page { size: A3 landscape; margin: 14mm 12mm; }
+  #pbar { display: none !important; }
+  body { background: #fff; font-size: 11px; }
+  .page { padding: 0; max-width: 100%; }
+  .doc-header { padding: 12px 16px; margin-bottom: 10px; }
+  .notice, .legend { padding: 7px 12px; margin-bottom: 10px; font-size: 11px; }
+  .chart-scroll { overflow: visible; }
+  .chart-inner { min-width: unset; padding: 12px 12px 16px; }
+  .ref-section { margin-top: 14px; }
+  #tt { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div id="pbar">
+  <span>Línea Temporal · Arquitectura Renacentista y Manierista en Italia · Siglos XV–XVI</span>
+  <button id="btnpdf" onclick="window.print()">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="12" y1="18" x2="12" y2="12"/>
+      <polyline points="9 15 12 18 15 15"/>
+    </svg>
+    Descargar PDF
+  </button>
+</div>
+
+<div class="page">
+
+  <div class="doc-header">
+    <div class="eyebrow">Historia de la Arquitectura · Siglos XV–XVI · Italia</div>
+    <h1>Línea Temporal: Arquitectura Renacentista y Manierista en Italia</h1>
+    <div class="sub">Vidas de 10 arquitectos · 21 obras · 5 hitos históricos · 1370–1595</div>
+    <div class="meta-row">
+      <span><strong>Período:</strong> Siglos XV–XVI (1370–1595)</span>
+      <span><strong>Región:</strong> Florencia · Roma · Venecia · Mantua · Vicenza</span>
+      <span><strong>Estilos:</strong> Renacimiento temprano · Alto Renacimiento · Manierismo</span>
+    </div>
+  </div>
+
+  <div class="notice">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--t5)">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+    </svg>
+    <div>
+      <strong>Tu Tríada de análisis (Tríada 5):</strong> marcada en naranja en toda la línea temporal.<br>
+      <strong>1.</strong> Palacio Medici (1444 · Florencia · Michelozzo Michelozzi) &nbsp;|&nbsp;
+      <strong>2.</strong> Palacio Te (1525 · Mantua · Giulio Romano) &nbsp;|&nbsp;
+      <strong>3.</strong> Basílica de Vicenza (1549 · Vicenza · A. Palladio)
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="leg-title">Referencias del diagrama</div>
+    <div class="leg-item">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--t5)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <strong style="color:var(--t5)">Tríada 5</strong> — Tu análisis
+    </div>
+    <div class="leg-item"><div class="ldot" style="background:#e8e4df;border:1.5px solid #aaa;"></div>Otras tríadas (pasar cursor = info)</div>
+    <div class="leg-item"><div class="lbar" style="background:#5a4fcf22;border:1px solid var(--a1);"></div>Vida del arquitecto</div>
+    <div class="leg-item"><div class="ldot" style="background:#fff;border:2px solid var(--h3);"></div>Hito histórico (pasar cursor = info)</div>
+    <div class="leg-item" style="color:var(--text-muted);font-size:10.5px;">Impresión recomendada: A3 horizontal</div>
+  </div>
+
+  <div class="chart-scroll">
+    <div class="chart-inner" id="CI"></div>
+  </div>
+
+  <div class="ref-section">
+    <div class="ref-grid" id="RT"></div>
+  </div>
+
+  <div class="doc-footer">
+    <span>Historia de la Arquitectura Renacentista y Manierista en Italia · Siglos XV–XVI</span>
+    <span>Tríada 5: Palacio Medici · Palacio Te · Basílica de Vicenza</span>
+  </div>
+
+</div>
+
+<div id="tt"></div>
+
+<script>
+const START=1370, END=1595;
+const CS=getComputedStyle(document.documentElement);
+function cv(v){return v.startsWith('var(')?CS.getPropertyValue(v.slice(4,-1).trim()).trim():v;}
+function px(y,W){return((y-START)/(END-START))*W;}
+
+const architects=[
+  {name:"F. Brunelleschi",       b:1377,d:1446,c:"--a1"},
+  {name:"Michelozzo Michelozzi", b:1396,d:1472,c:"--a2"},
+  {name:"L. B. Alberti",         b:1404,d:1472,c:"--a3"},
+  {name:"D. Bramante",           b:1444,d:1514,c:"--a4"},
+  {name:"Miguel Ángel",          b:1475,d:1564,c:"--a5"},
+  {name:"J. Sansovino",          b:1486,d:1570,c:"--a6"},
+  {name:"Giulio Romano",         b:1499,d:1546,c:"--a7"},
+  {name:"G. Vignola",            b:1507,d:1573,c:"--a8"},
+  {name:"A. Palladio",           b:1508,d:1580,c:"--a9"},
+  {name:"Bartolomeo Baronino",   b:1511,d:1554,c:"--a10"},
+];
+const obras=[
+  {y:1419,n:"Hospital de los Inocentes",      l:"Florencia", a:"F. Brunelleschi",       t:1, t5:false},
+  {y:1421,n:"Sacristía Vieja",                l:"Florencia", a:"F. Brunelleschi",       t:2, t5:false},
+  {y:1429,n:"Capilla Pazzi",                  l:"Florencia", a:"F. Brunelleschi",       t:6, t5:false},
+  {y:1444,n:"Palacio Medici",                 l:"Florencia", a:"Michelozzo Michelozzi", t:5, t5:true},
+  {y:1446,n:"Palacio Rucellai",               l:"Florencia", a:"L. B. Alberti",         t:4, t5:false},
+  {y:1470,n:"Iglesia de Sta. Andrea",         l:"Mantua",    a:"L. B. Alberti",         t:7, t5:false},
+  {y:1500,n:"Claustro Sta. Mª de la Pace",    l:"Roma",      a:"D. Bramante",           t:3, t5:false},
+  {y:1500,n:"Templete S. Pietro in Montorio", l:"Roma",      a:"D. Bramante",           t:6, t5:false},
+  {y:1520,n:"Sacristía Nueva",                l:"Florencia", a:"Miguel Ángel",          t:2, t5:false},
+  {y:1524,n:"Biblioteca Laurenciana",         l:"Florencia", a:"Miguel Ángel",          t:3, t5:false},
+  {y:1525,n:"Palacio Te",                     l:"Mantua",    a:"Giulio Romano",         t:5, t5:true},
+  {y:1536,n:"Palacio Nuevo-Campidoglio",      l:"Roma",      a:"Miguel Ángel",          t:1, t5:false},
+  {y:1537,n:"Librería Vieja",                 l:"Venecia",   a:"J. Sansovino",          t:1, t5:false},
+  {y:1540,n:"Palacio Spada",                  l:"Roma",      a:"Bartolomeo Baronino",   t:7, t5:false},
+  {y:1549,n:"Basílica de Vicenza",            l:"Vicenza",   a:"A. Palladio",           t:5, t5:true},
+  {y:1550,n:"Villa Rotonda",                  l:"Vicenza",   a:"A. Palladio",           t:6, t5:false},
+  {y:1551,n:"Villa Giulia",                   l:"Roma",      a:"G. Vignola",            t:4, t5:false},
+  {y:1565,n:"Iglesia S. Giorgio Maggiore",    l:"Venecia",   a:"A. Palladio",           t:3, t5:false},
+  {y:1566,n:"Palacio Valmarana",              l:"Vicenza",   a:"A. Palladio",           t:4, t5:false},
+  {y:1576,n:"Iglesia del Redentore",          l:"Venecia",   a:"A. Palladio",           t:7, t5:false},
+  {y:1580,n:"Teatro Olímpico",               l:"Vicenza",   a:"A. Palladio",           t:2, t5:false},
+];
+const events=[
+  {y:1420,s:"Perspectiva lineal",       f:"Invención de la perspectiva lineal por Brunelleschi.",c:"--h1"},
+  {y:1450,s:"Imprenta (Gutenberg)",     f:"Invención de la imprenta de tipos móviles (Gutenberg, c. 1440–1450).",c:"--h2"},
+  {y:1453,s:"Caída de Constantinopla", f:"Caída de Constantinopla: éxodo de sabios a Italia e impulso del Humanismo.",c:"--h3"},
+  {y:1492,s:"Llegada a América",        f:"Llegada de Colón a América (1492).",c:"--h4"},
+  {y:1517,s:"Reforma Protestante",      f:"Inicio de la Reforma Protestante de Lutero (1517).",c:"--h5"},
+];
+
+const TT=document.getElementById('tt');
+function stt(e,h){TT.innerHTML=h;TT.style.display='block';mtt(e);}
+function mtt(e){
+  let x=e.clientX+16,y=e.clientY-12;
+  if(x+270>window.innerWidth)x=e.clientX-276;
+  if(y+140>window.innerHeight)y=e.clientY-140;
+  TT.style.left=x+'px';TT.style.top=y+'px';
+}
+function htt(){TT.style.display='none';}
+document.addEventListener('mousemove',mtt);
+
+function buildChart(){
+  const ci=document.getElementById('CI');
+  ci.innerHTML='';
+  const CW=Math.max(ci.clientWidth-164-36,580);
+
+  function sh(label){
+    const d=document.createElement('div');d.className='sh';
+    d.innerHTML=`<div class="sh-sp"></div><div class="sh-lbl">${label}</div>`;
+    ci.appendChild(d);
+  }
+  function dv(){
+    const d=document.createElement('div');d.className='divid';
+    d.innerHTML='<div class="dsp"></div><div class="dln"></div>';
+    ci.appendChild(d);
+  }
+  function mkrow(lhtml){
+    const row=document.createElement('div');row.className='row';
+    const lbl=document.createElement('div');lbl.className='rl';lbl.innerHTML=lhtml;
+    const area=document.createElement('div');area.className='ra';
+    row.appendChild(lbl);row.appendChild(area);ci.appendChild(row);
+    return area;
+  }
+
+  /* AXIS */
+  const ar=document.createElement('div');ar.className='axis-row';
+  const asp=document.createElement('div');asp.className='ax-sp';ar.appendChild(asp);
+  const al=document.createElement('div');al.className='ax-line';
+  for(let y=1380;y<=1590;y+=10){
+    const t=document.createElement('div');
+    t.className='tick '+(y%100===0?'cen':y%50===0?'half':'dec');
+    t.style.left=px(y,CW)+'px';
+    t.innerHTML=`<div class="tn"></div><div class="tlbl">${y}</div>`;
+    al.appendChild(t);
+  }
+  [1400,1500].forEach(cy=>{
+    const b=document.createElement('div');b.className='cband';
+    b.style.left=px(cy,CW)+'px';al.appendChild(b);
+  });
+  ar.appendChild(al);ci.appendChild(ar);
+
+  /* EVENTS */
+  sh('A. Hitos históricos contextuales');
+  events.forEach(ev=>{
+    const row=document.createElement('div');row.className='row ev-row';
+    const lbl=document.createElement('div');lbl.className='rl';
+    lbl.style.cssText=`font-size:9px;color:var(${ev.c});font-weight:500;font-style:italic;`;
+    row.appendChild(lbl);
+    const area=document.createElement('div');area.className='ev-area';
+    const xp=px(ev.y,CW);
+    const dot=document.createElement('div');dot.className='evdot';
+    dot.style.cssText=`left:${xp}px;border-color:${cv('var('+ev.c+')')};`;
+    area.appendChild(dot);
+    const el=document.createElement('div');el.className='evlbl';
+    const gl=xp>CW*.66;
+    el.style.cssText=`color:var(${ev.c});`+(gl?`right:${CW-xp+12}px;`:`left:${xp+12}px;`);
+    el.innerHTML=`<span style="opacity:.6">${ev.y}</span> — ${ev.s}`;
+    area.appendChild(el);
+    dot.addEventListener('mouseenter',e=>stt(e,`<span class="ty">${ev.y}</span><span class="tm">${ev.f}</span>`));
+    dot.addEventListener('mouseleave',htt);
+    row.appendChild(area);ci.appendChild(row);
+  });
+
+  dv();
+
+  /* ARCHITECTS */
+  sh('B. Período de vida de los arquitectos');
+  architects.forEach((a,i)=>{
+    const area=mkrow(a.name);
+    const hex=CS.getPropertyValue(a.c).trim();
+    const bar=document.createElement('div');bar.className='abar';
+    bar.style.cssText=`left:${px(a.b,CW)}px;width:${px(a.d,CW)-px(a.b,CW)}px;background:${hex}20;border:1.5px solid ${hex};color:${hex};`;
+    bar.textContent=`${a.b}–${a.d}`;
+    area.appendChild(bar);
+    bar.addEventListener('mouseenter',e=>stt(e,`<span class="tn2">${a.name}</span><span class="tm">${a.b} – ${a.d} &nbsp;·&nbsp; ${a.d-a.b} años</span>`));
+    bar.addEventListener('mouseleave',htt);
+  });
+
+  dv();
+
+  /* OBRAS */
+  sh('C. Las 21 obras (1419–1580)');
+
+  /* Tríada 5 strip */
+  const t5s=document.createElement('div');t5s.className='t5strip';
+  const t5l=document.createElement('div');t5l.className='t5lc';
+  t5l.innerHTML='<span class="tag">&#9733; Tríada 5</span><span class="sub2">Tu análisis</span>';
+  t5s.appendChild(t5l);
+  const t5a=document.createElement('div');t5a.className='t5area';
+
+  obras.filter(o=>o.t5).forEach(o=>{
+    const xp=px(o.y,CW);
+    const dot=document.createElement('div');dot.className='dt5';
+    dot.style.cssText=`width:15px;height:15px;left:${xp}px;top:50%;transform:translate(-50%,-50%);`;
+    t5a.appendChild(dot);
+
+    const vl=document.createElement('div');
+    vl.style.cssText=`position:absolute;left:${xp}px;top:0;bottom:0;width:1px;background:var(--t5);opacity:.22;pointer-events:none;transform:translateX(-50%);`;
+    t5a.appendChild(vl);
+
+    const gl=xp>CW*.73;
+    const lb=document.createElement('div');
+    lb.style.cssText=`position:absolute;top:36px;font-size:8.5px;font-weight:600;color:var(--t5);white-space:nowrap;pointer-events:none;`+(gl?`right:${CW-xp+4}px;`:`left:${xp-3}px;`);
+    lb.textContent=`${o.y} · ${o.n}`;
+    t5a.appendChild(lb);
+
+    dot.addEventListener('mouseenter',e=>stt(e,`<span class="ty">${o.y}</span><span class="tn2">${o.n}</span><span class="tm">${o.l} &nbsp;·&nbsp; ${o.a}</span><span class="tb tb5">&#9733; Tríada 5 · Tu análisis</span>`));
+    dot.addEventListener('mouseleave',htt);
+  });
+  t5s.appendChild(t5a);ci.appendChild(t5s);
+
+  /* Others — 3 sub-rows */
+  const oth=obras.filter(o=>!o.t5);
+  const bk=[[],[],[]];
+  oth.forEach((o,i)=>bk[i%3].push(o));
+  bk.forEach((grp,ri)=>{
+    const row=document.createElement('div');row.className='row orow';
+    const lbl=document.createElement('div');lbl.className='rl';
+    lbl.style.cssText='font-size:10px;color:var(--text-muted);';
+    lbl.textContent=ri===0?'Otras tríadas':'';
+    row.appendChild(lbl);
+    const area=document.createElement('div');area.className='oarea';
+    grp.forEach(o=>{
+      const xp=px(o.y,CW);
+      const dot=document.createElement('div');dot.className='doth';
+      dot.style.cssText=`width:10px;height:10px;left:${xp}px;top:8px;transform:translateX(-50%);`;
+      area.appendChild(dot);
+      const gl=xp>CW*.78;
+      const lb=document.createElement('div');
+      lb.style.cssText=`position:absolute;font-size:7.5px;color:var(--text-faint);white-space:nowrap;pointer-events:none;`+(ri===1?'top:2px;':'top:20px;')+(gl?`right:${CW-xp+4}px;`:`left:${xp+6}px;`);
+      lb.textContent=`${o.y} T${o.t}`;
+      area.appendChild(lb);
+      dot.addEventListener('mouseenter',e=>{
+        dot.style.transform='translateX(-50%) scale(1.65)';
+        stt(e,`<span class="ty">${o.y}</span><span class="tn2">${o.n}</span><span class="tm">${o.l} &nbsp;·&nbsp; ${o.a}</span><span class="tb tbo">Tríada ${o.t}</span>`);
+      });
+      dot.addEventListener('mouseleave',()=>{dot.style.transform='translateX(-50%) scale(1)';htt();});
+    });
+    row.appendChild(area);ci.appendChild(row);
+  });
+}
+
+function buildTables(){
+  const rt=document.getElementById('RT');
+  const archHex=architects.map(a=>CS.getPropertyValue(a.c).trim());
+
+  /* Obras */
+  const b1=document.createElement('div');b1.className='rblock';
+  b1.innerHTML='<h3>Tabla 1 · Las 21 obras</h3>';
+  const t1=document.createElement('table');t1.className='rt';
+  t1.innerHTML='<thead><tr><th>#</th><th>Año</th><th>Obra</th><th>Ubicación</th><th>Autor</th><th>Tríada</th></tr></thead>';
+  const tb1=document.createElement('tbody');
+  obras.forEach((o,i)=>{
+    const tr=document.createElement('tr');
+    if(o.t5)tr.className='t5r';
+    tr.innerHTML=`<td>${i+1}</td><td>${o.y}</td><td>${o.t5?'&#9733; ':''}${o.n}</td><td>${o.l}</td><td>${o.a}</td><td>${o.t}${o.t5?' &#9733;':''}</td>`;
+    tb1.appendChild(tr);
+  });
+  t1.appendChild(tb1);b1.appendChild(t1);rt.appendChild(b1);
+
+  /* Arquitectos */
+  const b2=document.createElement('div');b2.className='rblock';
+  b2.innerHTML='<h3>Tabla 2 · Arquitectos</h3>';
+  const t2=document.createElement('table');t2.className='rt';
+  t2.innerHTML='<thead><tr><th></th><th>Arquitecto</th><th>Nac.</th><th>Fal.</th><th>Vida</th></tr></thead>';
+  const tb2=document.createElement('tbody');
+  architects.forEach((a,i)=>{
+    const c=archHex[i]||'#888';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><span class="sw" style="background:${c}"></span></td><td>${a.name}</td><td>${a.b}</td><td>${a.d}</td><td>${a.d-a.b} años</td>`;
+    tb2.appendChild(tr);
+  });
+  t2.appendChild(tb2);b2.appendChild(t2);rt.appendChild(b2);
+
+  /* Hitos */
+  const b3=document.createElement('div');b3.className='rblock';
+  b3.innerHTML='<h3>Tabla 3 · Hitos históricos</h3>';
+  const t3=document.createElement('table');t3.className='rt';
+  t3.innerHTML='<thead><tr><th>Año</th><th>Hito</th></tr></thead>';
+  const tb3=document.createElement('tbody');
+  events.forEach(ev=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${ev.y}</td><td>${ev.f}</td>`;
+    tb3.appendChild(tr);
+  });
+  t3.appendChild(tb3);b3.appendChild(t3);rt.appendChild(b3);
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  buildChart();buildTables();
+  let rt;
+  window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(buildChart,200);});
+});
+</script>
+</body>
+</html>
